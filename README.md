@@ -7,3 +7,17 @@ Tested on a Wurm Unlimited Dedicated Server v1.8.0.3 with ago1024's server modlo
 
 # configuration
 Default config file
+
+Default config file:
+
+``# Automatically disband deeds when the mayor has been offline for a certain number of days?
+``# The number of days can be configured below; if the mayor has been inactive/offline for
+``# that number of days, the village/deed will disband regardless of how much upkeep it has.
+``# Default: false
+``autoDisbandInactive=true
+``
+``# If enabled (above), set the number of days here. If the mayor is offline/inactive for this
+``# period of time, the village/deed will disband regardless of how much upkeep it has.
+``# Default: 30
+``autoDisbandInactiveDays=30
+``
