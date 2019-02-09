@@ -10,3 +10,6 @@ The following settings are available:
 
 * autoDisbandInactive - true/false, determines whether deeds will be disbanded after the mayor is inactive for the configured number of days. Default is false.
 * autoDisbandInactiveDays - integer, how many days of inactivity for the mayor before disbanding the deed. Default is 30.
+
+# prerequisites
+Requires [SinduskLibrary](https://github.com/Sindusk/sindusklibrary/releases).
