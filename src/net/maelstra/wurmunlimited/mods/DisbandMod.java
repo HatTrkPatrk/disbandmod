@@ -15,6 +15,7 @@ import javassist.NotFoundException;
 
 import mod.sin.lib.Util;
 
+import com.wurmonline.server.NoSuchPlayerException;
 import com.wurmonline.server.TimeConstants;
 import com.wurmonline.server.villages.Village;
 
@@ -66,15 +67,35 @@ public class DisbandMod implements WurmServerMod, Configurable, PreInitable
 
             if (DisbandMod.autoDisbandInactive)
             {
+                //CtClass ctGuardPlan = classPool.get("com.wurmonline.server.villages.GuardPlan");
+                //String replace = "net.maelstra.wurmunlimited.mods.DisbandMod.logger.info(\"Checking for mayor inactivity on village \\\" + this.getVillage().getName() + \\\"...\");"
+                //+ "if(this.getVillage().getMayor().isPlayer()){"
+                //+ "  long lastLogout = com.wurmonline.server.Players.getInstance().getLastLogoutForPlayer(this.getVillage().getMayor().getId());"
+                //+ "  long delta = System.currentTimeMillis() - lastLogout;"
+                //+ "  long gracePeriod = " + String.valueOf(TimeConstants.DAY_MILLIS * DisbandMod.autoDisbandInactiveDays) + ";"
+                //+ "  if(delta >= gracePeriod){"
+                //+ "    this.getVillage().disband(\"upkeep\");"
+                //+ "    return false;"
+                //+ "  }"
+                //+ "}";
+                //Util.setReason("Forcibly disband deeds if the mayor is inactive for configured number of days (regardless of upkeep).");
+                //Util.insertBeforeDeclared(thisClass, ctGuardPlan, "poll", replace);
+
                 CtClass ctVillage = classPool.get("com.wurmonline.server.villages.Village");
                 String replace = "net.maelstra.wurmunlimited.mods.DisbandMod.logAttempt(this.getName());"
-                  + "if(this.getMayor().isPlayer()){"
-                  + "  long lastLogout = com.wurmonline.server.Players.getInstance().getLastLogoutForPlayer(this.getMayor().getId());"
-                  + "  long delta = System.currentTimeMillis() - lastLogout;"
-                  + "  long gracePeriod = " + String.valueOf(TimeConstants.DAY_MILLIS * DisbandMod.autoDisbandInactiveDays) + ";"
-                  + "  if(delta >= gracePeriod){"
-                  + "    return true;"
+                  + "try{"
+                  + "  if(this.getMayor().isPlayer()&&!this.isPermanent){"
+                  + "    long lastLogout = com.wurmonline.server.Players.getInstance().getLastLogoutForPlayer(this.getMayor().getId());"
+                  + "    long delta = System.currentTimeMillis() - lastLogout;"
+                  + "    long gracePeriod = " + String.valueOf(TimeConstants.DAY_MILLIS * DisbandMod.autoDisbandInactiveDays) + ";"
+                  + "    if(delta >= gracePeriod){"
+                  + "      return true;"
+                  + "    }"
                   + "  }"
+                  + "}"
+                  + "catch(com.wurmonline.server.NoSuchPlayerException nspe){"
+                  + "  net.maelstra.wurmunlimited.mods.DisbandMod.handleNoSuchPlayerException(nspe);"
+                  + "  return false;"
                   + "}";
                 Util.setReason("Automatically disband deeds if the mayor is inactive for configured number of days (regardless of upkeep).");
                 Util.insertBeforeDeclared(thisClass, ctVillage, "checkDisband", replace);
@@ -84,6 +105,11 @@ public class DisbandMod implements WurmServerMod, Configurable, PreInitable
         {
             throw new HookException(e);
         }
+    }
+
+    public static void handleNoSuchPlayerException(NoSuchPlayerException nspe)
+    {
+        DisbandMod.logger.severe(nspe.getMessage());
     }
 
     public static void logAttempt(String villageName)
