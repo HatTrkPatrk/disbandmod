@@ -1,3 +1,8 @@
+<h1>THIS MOD IS OBSOLETE</h1>
+<h2>It likely does not work anymore on the most recent WU version and may cause serious issues if used.</h2>
+<h3>If you insist on using it, <b>make frequent backups</b></h3>
+<h4>And if you're a developer interested in making it work again, feel free to fork the repository!</h4>
+
 # disbandmod
 Automatically and instantly disband inactive deeds
 
